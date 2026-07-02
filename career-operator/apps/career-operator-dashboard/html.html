@@ -854,7 +854,7 @@ function makeOverlayDraggable(elm){
 const header=elm.querySelector('.panel-header');
 let x=0,y=0,dx=0,dy=0;
 function onMouseDown(e){e.preventDefault();dx=e.clientX;dy=e.clientY;document.addEventListener('mousemove',onMouseMove);document.addEventListener('mouseup',onMouseUp)}
-function onMouseMove(e){x=dx-e.clientX;y=dy-e.clientY;dx=e.clientX;dy=e.clientY;elm.style.transform='translate(calc(-50% - '+x+'px),calc(-50% - '+y+'px)')}
+function onMouseMove(e){x=dx-e.clientX;y=dy-e.clientY;dx=e.clientX;dy=e.clientY;elm.style.transform='translate(calc(-50% - '+x+'px),calc(-50% - '+y+'px))'}
 function onMouseUp(){document.removeEventListener('mousemove',onMouseMove);document.removeEventListener('mouseup',onMouseUp)}
 header.addEventListener('mousedown',onMouseDown)
 }
