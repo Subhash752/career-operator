@@ -1,0 +1,25 @@
+{
+  "name": "job_descriptions",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "company_id", "type": "UUID", "foreign_key": { "references": "companies.id" } },
+    { "name": "portal_site_id", "type": "UUID", "foreign_key": { "references": "portal_sites.id" } },
+    { "name": "source_url", "type": "TEXT", "required": true, "max_length": 1000 },
+    { "name": "title", "type": "TEXT", "required": true, "max_length": 240 },
+    { "name": "company_name", "type": "TEXT", "max_length": 240 },
+    { "name": "location", "type": "TEXT", "max_length": 300 },
+    { "name": "salary_text", "type": "TEXT", "max_length": 300 },
+    { "name": "employment_type", "type": "ENUM", "default": "unknown", "options": ["unknown", "full_time", "part_time", "contract", "internship", "temporary", "freelance"] },
+    { "name": "experience_level", "type": "ENUM", "default": "unknown", "options": ["unknown", "intern", "entry", "mid", "senior", "lead", "executive"] },
+    { "name": "deadline", "type": "DATE" },
+    { "name": "skills", "type": "JSON" },
+    { "name": "responsibilities", "type": "JSON" },
+    { "name": "qualifications", "type": "JSON" },
+    { "name": "raw_text", "type": "TEXT" },
+    { "name": "document_file_path", "type": "FILE_PATH", "max_length": 700 },
+    { "name": "extraction_confidence", "type": "FLOAT" },
+    { "name": "extraction_payload", "type": "JSON" }
+  ],
+  "config": {}
+}

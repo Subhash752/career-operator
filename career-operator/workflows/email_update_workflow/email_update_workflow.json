@@ -1,0 +1,80 @@
+{
+  "name": "email_update_workflow",
+  "description": "Classifies a synced career email and updates application tracking only when confidence is sufficient.",
+  "start": { "type": "MANUAL" },
+  "nodes": [
+    {
+      "id": "email_update",
+      "type": "FORM",
+      "label": "Email update",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "sender": { "type": "string", "title": "Sender" },
+            "subject": { "type": "string", "title": "Subject" },
+            "snippet": { "type": "string", "title": "Snippet" },
+            "received_at": { "type": "string", "title": "Received at" },
+            "raw_email_ref": { "type": "string", "title": "Raw email reference" }
+          },
+          "required": ["subject"]
+        }
+      }
+    },
+    {
+      "id": "classify_email",
+      "type": "AGENT",
+      "label": "Classify email update",
+      "config": {
+        "agent_name": "email-operator-agent",
+        "input_mapping": {
+          "sender": { "type": "expression", "value": "email_update.sender", "optional": true },
+          "subject": { "type": "expression", "value": "email_update.subject" },
+          "snippet": { "type": "expression", "value": "email_update.snippet", "optional": true },
+          "received_at": { "type": "expression", "value": "email_update.received_at", "optional": true },
+          "raw_email_ref": { "type": "expression", "value": "email_update.raw_email_ref", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "review_if_needed",
+      "type": "FORM",
+      "label": "Review email classification",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "classification_confirmed": { "type": "boolean", "title": "Classification confirmed" },
+            "application_id": { "type": "string", "title": "Application ID" },
+            "corrected_classification": { "type": "string", "title": "Corrected classification", "enum": ["verification", "recruiter_reply", "assessment", "interview", "offer", "rejection", "deadline", "status_update", "unrelated"] },
+            "notes": { "type": "string", "title": "Notes" }
+          },
+          "required": ["classification_confirmed"]
+        }
+      }
+    },
+    {
+      "id": "record_email_update",
+      "type": "AGENT",
+      "label": "Record email update",
+      "config": {
+        "agent_name": "email-operator-agent",
+        "input_mapping": {
+          "email_payload": { "type": "expression", "value": "email_update" },
+          "classification_result": { "type": "expression", "value": "classify_email", "optional": true },
+          "classification_confirmed": { "type": "expression", "value": "review_if_needed.classification_confirmed" },
+          "application_id": { "type": "expression", "value": "review_if_needed.application_id", "optional": true },
+          "corrected_classification": { "type": "expression", "value": "review_if_needed.corrected_classification", "optional": true },
+          "notes": { "type": "expression", "value": "review_if_needed.notes", "optional": true }
+        }
+      }
+    },
+    { "id": "end", "type": "END", "label": "Email update complete" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "email_update", "target": "classify_email" },
+    { "id": "e2", "source": "classify_email", "target": "review_if_needed" },
+    { "id": "e3", "source": "review_if_needed", "target": "record_email_update" },
+    { "id": "e4", "source": "record_email_update", "target": "end" }
+  ]
+}

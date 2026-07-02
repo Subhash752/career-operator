@@ -1,0 +1,6 @@
+{
+  "name": "career-operator-dashboard",
+  "display_name": "Career Operator Dashboard",
+  "description": "Website dashboard for portal memory, autofill, resume review, applications, and email updates.",
+  "type": "html"
+}

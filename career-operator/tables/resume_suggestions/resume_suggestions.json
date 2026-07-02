@@ -1,0 +1,20 @@
+{
+  "name": "resume_suggestions",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "application_id", "type": "UUID", "required": true, "foreign_key": { "references": "applications.id" } },
+    { "name": "resume_id", "type": "UUID", "required": true, "foreign_key": { "references": "resumes.id" } },
+    { "name": "resume_version_id", "type": "UUID", "foreign_key": { "references": "resume_versions.id" } },
+    { "name": "suggestion_type", "type": "ENUM", "required": true, "options": ["ats_keyword", "missing_skill", "weak_bullet", "project_order", "experience_alignment", "impact_metric", "remove_irrelevant", "job_specific_rewrite", "formatting", "other"] },
+    { "name": "section", "type": "TEXT", "max_length": 180 },
+    { "name": "original_text", "type": "TEXT" },
+    { "name": "suggested_text", "type": "TEXT" },
+    { "name": "reason", "type": "TEXT" },
+    { "name": "confidence", "type": "FLOAT" },
+    { "name": "impact_score", "type": "INTEGER" },
+    { "name": "status", "type": "ENUM", "required": true, "default": "pending", "options": ["pending", "accepted", "rejected", "edited", "applied"] },
+    { "name": "user_edit_text", "type": "TEXT" }
+  ],
+  "config": {}
+}

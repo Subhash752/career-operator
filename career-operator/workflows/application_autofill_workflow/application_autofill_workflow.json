@@ -1,0 +1,86 @@
+{
+  "name": "application_autofill_workflow",
+  "description": "Prepares autofill data and a final application readiness checklist without submitting externally.",
+  "start": { "type": "MANUAL" },
+  "nodes": [
+    {
+      "id": "autofill_request",
+      "type": "FORM",
+      "label": "Prepare autofill",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "application_id": { "type": "string", "title": "Application ID" },
+            "autofill_profile_id": { "type": "string", "title": "Autofill profile ID" },
+            "portal_site_id": { "type": "string", "title": "Portal site ID" }
+          },
+          "required": ["application_id"]
+        }
+      }
+    },
+    {
+      "id": "prepare_autofill",
+      "type": "AGENT",
+      "label": "Prepare autofill packet",
+      "config": {
+        "agent_name": "autofill-operator-agent",
+        "input_mapping": {
+          "application_id": { "type": "expression", "value": "autofill_request.application_id" },
+          "autofill_profile_id": { "type": "expression", "value": "autofill_request.autofill_profile_id", "optional": true },
+          "portal_site_id": { "type": "expression", "value": "autofill_request.portal_site_id", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "readiness_check",
+      "type": "AGENT",
+      "label": "Check application readiness",
+      "config": {
+        "agent_name": "application-operator-agent",
+        "input_mapping": {
+          "application_id": { "type": "expression", "value": "autofill_request.application_id" },
+          "autofill_packet": { "type": "expression", "value": "prepare_autofill", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "final_confirmation",
+      "type": "FORM",
+      "label": "Final application confirmation",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "ready_to_submit": { "type": "boolean", "title": "Ready to submit" },
+            "confirm_no_auto_submit": { "type": "boolean", "title": "I understand Career Operator will not submit without my action" },
+            "notes": { "type": "string", "title": "Notes" }
+          },
+          "required": ["ready_to_submit", "confirm_no_auto_submit"]
+        }
+      }
+    },
+    {
+      "id": "record_readiness",
+      "type": "AGENT",
+      "label": "Record readiness",
+      "config": {
+        "agent_name": "application-operator-agent",
+        "input_mapping": {
+          "application_id": { "type": "expression", "value": "autofill_request.application_id" },
+          "ready_to_submit": { "type": "expression", "value": "final_confirmation.ready_to_submit" },
+          "confirm_no_auto_submit": { "type": "expression", "value": "final_confirmation.confirm_no_auto_submit" },
+          "notes": { "type": "expression", "value": "final_confirmation.notes", "optional": true }
+        }
+      }
+    },
+    { "id": "end", "type": "END", "label": "Autofill readiness complete" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "autofill_request", "target": "prepare_autofill" },
+    { "id": "e2", "source": "prepare_autofill", "target": "readiness_check" },
+    { "id": "e3", "source": "readiness_check", "target": "final_confirmation" },
+    { "id": "e4", "source": "final_confirmation", "target": "record_readiness" },
+    { "id": "e5", "source": "record_readiness", "target": "end" }
+  ]
+}

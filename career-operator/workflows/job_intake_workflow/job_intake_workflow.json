@@ -1,0 +1,55 @@
+{
+  "name": "job_intake_workflow",
+  "description": "Turns a pasted job URL into job intelligence, portal memory, and an application draft.",
+  "start": { "type": "MANUAL" },
+  "nodes": [
+    {
+      "id": "job_intake",
+      "type": "FORM",
+      "label": "Paste job URL",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "job_url": { "type": "string", "title": "Job URL" },
+            "job_description_text": { "type": "string", "title": "Job description text", "description": "Optional fallback if the URL cannot be read." },
+            "resume_id": { "type": "string", "title": "Resume ID", "description": "Optional resume to use for later review." }
+          },
+          "required": ["job_url"]
+        },
+        "ui_schema": { "ui:order": ["job_url", "job_description_text", "resume_id"] }
+      }
+    },
+    {
+      "id": "extract_job",
+      "type": "AGENT",
+      "label": "Extract job intelligence",
+      "config": {
+        "agent_name": "job-intelligence-agent",
+        "input_mapping": {
+          "job_url": { "type": "expression", "value": "job_intake.job_url" },
+          "job_description_text": { "type": "expression", "value": "job_intake.job_description_text", "optional": true },
+          "resume_id": { "type": "expression", "value": "job_intake.resume_id", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "portal_check",
+      "type": "AGENT",
+      "label": "Check portal and account memory",
+      "config": {
+        "agent_name": "portal-operator-agent",
+        "input_mapping": {
+          "job_url": { "type": "expression", "value": "job_intake.job_url" },
+          "job_intelligence": { "type": "expression", "value": "extract_job", "optional": true }
+        }
+      }
+    },
+    { "id": "end", "type": "END", "label": "Job captured" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "job_intake", "target": "extract_job" },
+    { "id": "e2", "source": "extract_job", "target": "portal_check" },
+    { "id": "e3", "source": "portal_check", "target": "end" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "career_memory",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "memory_type", "type": "ENUM", "required": true, "options": ["personal_profile", "education", "skill", "project", "experience", "certification", "answer_template", "application_answer", "preference", "portal_note", "interview_note", "email_fact"] },
+    { "name": "title", "type": "TEXT", "required": true, "max_length": 240 },
+    { "name": "content", "type": "TEXT" },
+    { "name": "structured_content", "type": "JSON" },
+    { "name": "source", "type": "ENUM", "default": "user", "options": ["user", "resume", "application", "email", "agent", "import"] },
+    { "name": "confidence", "type": "FLOAT" },
+    { "name": "reusable", "type": "BOOLEAN", "default": true },
+    { "name": "sensitivity_level", "type": "ENUM", "default": "normal", "options": ["normal", "sensitive", "credential", "optional_demographic"] },
+    { "name": "last_used_at", "type": "DATETIME" }
+  ],
+  "config": {}
+}

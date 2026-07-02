@@ -1,0 +1,8 @@
+{
+  "name": "deadline_reminder_schedule",
+  "description": "Daily check for application deadlines within 7 days and creates notifications.",
+  "schedule_type": "TIME",
+  "config": { "cron": "0 8 * * *" },
+  "agent_name": "email-operator-agent",
+  "is_active": false
+}

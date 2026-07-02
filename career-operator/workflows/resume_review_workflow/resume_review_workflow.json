@@ -1,0 +1,78 @@
+{
+  "name": "resume_review_workflow",
+  "description": "Runs resume intelligence and pauses for accept/reject/manual-edit decisions before any new resume version is created.",
+  "start": { "type": "MANUAL" },
+  "nodes": [
+    {
+      "id": "resume_review_request",
+      "type": "FORM",
+      "label": "Resume review request",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "application_id": { "type": "string", "title": "Application ID" },
+            "resume_id": { "type": "string", "title": "Resume ID" },
+            "job_description_id": { "type": "string", "title": "Job description ID" }
+          },
+          "required": ["application_id", "resume_id", "job_description_id"]
+        }
+      }
+    },
+    {
+      "id": "analyze_resume",
+      "type": "AGENT",
+      "label": "Analyze resume against job",
+      "config": {
+        "agent_name": "resume-intelligence-agent",
+        "input_mapping": {
+          "application_id": { "type": "expression", "value": "resume_review_request.application_id" },
+          "resume_id": { "type": "expression", "value": "resume_review_request.resume_id" },
+          "job_description_id": { "type": "expression", "value": "resume_review_request.job_description_id" }
+        }
+      }
+    },
+    {
+      "id": "review_decision",
+      "type": "FORM",
+      "label": "Review resume suggestions",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "decision": { "type": "string", "title": "Decision", "enum": ["accept_all", "accept_individually", "manual_edit", "reject_all"] },
+            "accepted_suggestion_ids": { "type": "array", "title": "Accepted suggestion IDs", "items": { "type": "string" } },
+            "manual_edits_json": { "type": "string", "title": "Manual edits JSON" },
+            "approve_new_version": { "type": "boolean", "title": "Approve creating a new resume version" },
+            "notes": { "type": "string", "title": "Notes" }
+          },
+          "required": ["decision", "approve_new_version"]
+        }
+      }
+    },
+    {
+      "id": "record_resume_decision",
+      "type": "AGENT",
+      "label": "Record resume decision",
+      "config": {
+        "agent_name": "resume-intelligence-agent",
+        "input_mapping": {
+          "application_id": { "type": "expression", "value": "resume_review_request.application_id" },
+          "resume_id": { "type": "expression", "value": "resume_review_request.resume_id" },
+          "decision": { "type": "expression", "value": "review_decision.decision" },
+          "accepted_suggestion_ids": { "type": "expression", "value": "review_decision.accepted_suggestion_ids", "optional": true },
+          "manual_edits_json": { "type": "expression", "value": "review_decision.manual_edits_json", "optional": true },
+          "approve_new_version": { "type": "expression", "value": "review_decision.approve_new_version" },
+          "notes": { "type": "expression", "value": "review_decision.notes", "optional": true }
+        }
+      }
+    },
+    { "id": "end", "type": "END", "label": "Resume review complete" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "resume_review_request", "target": "analyze_resume" },
+    { "id": "e2", "source": "analyze_resume", "target": "review_decision" },
+    { "id": "e3", "source": "review_decision", "target": "record_resume_decision" },
+    { "id": "e4", "source": "record_resume_decision", "target": "end" }
+  ]
+}

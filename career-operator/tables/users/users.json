@@ -1,0 +1,19 @@
+{
+  "name": "users",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "full_name", "type": "TEXT", "max_length": 200 },
+    { "name": "email", "type": "TEXT", "required": true, "max_length": 320 },
+    { "name": "phone", "type": "TEXT", "max_length": 80 },
+    { "name": "address", "type": "TEXT", "max_length": 700 },
+    { "name": "linkedin_url", "type": "TEXT", "max_length": 500 },
+    { "name": "github_url", "type": "TEXT", "max_length": 500 },
+    { "name": "portfolio_url", "type": "TEXT", "max_length": 500 },
+    { "name": "default_resume_id", "type": "UUID" },
+    { "name": "email_sync_status", "type": "ENUM", "default": "not_connected", "options": ["not_connected", "pending_approval", "connected", "error", "disabled"] },
+    { "name": "profile_completeness", "type": "INTEGER", "default": 0 },
+    { "name": "preferences", "type": "JSON" }
+  ],
+  "config": {}
+}

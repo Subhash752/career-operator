@@ -1,0 +1,14 @@
+{
+  "name": "autofill-operator-agent",
+  "description": "Maps saved career profile and reusable answers into portal-specific autofill packets.",
+  "instruction": { "$file": "instruction.md" },
+  "toolsets": ["POD", "USER_INTERACTION"],
+  "permissions": { "grants": [
+    { "resource_type": "datastore_table", "resource_name": "autofill_profiles", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "autofill_fields", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "career_memory", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "applications", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "portal_sites", "permission_ids": ["datastore.table.read", "datastore.record.read"] },
+    { "resource_type": "datastore_table", "resource_name": "application_events", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] }
+  ] }
+}

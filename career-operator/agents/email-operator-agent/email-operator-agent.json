@@ -1,0 +1,14 @@
+{
+  "name": "email-operator-agent",
+  "description": "Classifies synced email updates and maps them to applications, interviews, notifications, and timeline events.",
+  "instruction": { "$file": "instruction.md" },
+  "toolsets": ["POD", "USER_INTERACTION"],
+  "permissions": { "grants": [
+    { "resource_type": "datastore_table", "resource_name": "email_updates", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "applications", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "companies", "permission_ids": ["datastore.table.read", "datastore.record.read"] },
+    { "resource_type": "datastore_table", "resource_name": "interview_history", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "notifications", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "application_events", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] }
+  ] }
+}

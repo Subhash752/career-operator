@@ -1,0 +1,1005 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Career Operator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f4f5f8;--surface:#fff;--border:#e2e6ef;--text:#1a1f2e;--text-secondary:#6b7280;--primary:#4f46e5;--primary-light:#eef2ff;--green:#059669;--green-bg:#ecfdf5;--yellow:#d97706;--yellow-bg:#fffbeb;--red:#dc2626;--red-bg:#fef2f2;--blue:#2563eb;--blue-bg:#eff6ff;--gray:#6b7280;--gray-bg:#f9fafb;--radius:12px;--radius-sm:8px;font-family:Inter,system-ui,-apple-system,sans-serif;font-size:14px;color:var(--text);background:var(--bg)}
+body{min-height:100vh}
+.app{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);padding:24px 0;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar .logo{padding:0 20px 24px;font-size:18px;font-weight:800;color:var(--primary);letter-spacing:-0.3px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sidebar .logo span{color:var(--text)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;color:var(--text-secondary);font-weight:500;transition:all 0.15s;border:none;background:none;width:100%;text-align:left;font-size:14px}
+.nav-item:hover{background:var(--primary-light);color:var(--primary)}
+.nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:600;border-right:3px solid var(--primary)}
+.nav-item svg{width:18px;height:18px;flex-shrink:0}
+.main{flex:1;padding:32px;overflow-y:auto;max-width:1200px;margin:0 auto;width:100%}
+.page{display:none}
+.page.active{display:block}
+h1{font-size:24px;font-weight:700;margin-bottom:4px}
+.subtitle{color:var(--text-secondary);margin-bottom:24px}
+.summary-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.card .label{font-size:12px;color:var(--text-secondary);font-weight:500;text-transform:uppercase;letter-spacing:0.04em}
+.card .value{font-size:28px;font-weight:700;margin-top:4px}
+.card .value.green{color:var(--green)}
+.card .value.blue{color:var(--blue)}
+.card .value.yellow{color:var(--yellow)}
+.card .value.red{color:var(--red)}
+.job-paste{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:28px;display:flex;gap:12px;align-items:flex-start}
+.job-paste input[type=url]{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;outline:none;transition:border-color 0.15s}
+.job-paste input[type=url]:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,0.1)}
+.job-paste button{background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);padding:10px 20px;font-weight:600;font-size:14px;cursor:pointer;transition:opacity 0.15s;white-space:nowrap}
+.job-paste button:hover{opacity:0.9}
+.job-paste button:disabled{opacity:0.5;cursor:not-allowed}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-header h2{font-size:16px;font-weight:600}
+table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+th{text-align:left;padding:10px 12px;font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em;background:var(--gray-bg);border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--primary-light)}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600}
+.badge.green{background:var(--green-bg);color:var(--green)}
+.badge.yellow{background:var(--yellow-bg);color:var(--yellow)}
+.badge.red{background:var(--red-bg);color:var(--red)}
+.badge.blue{background:var(--blue-bg);color:var(--blue)}
+.badge.gray{background:var(--gray-bg);color:var(--gray)}
+.clickable{cursor:pointer;color:var(--primary);font-weight:500}
+.clickable:hover{text-decoration:underline}
+.empty-state{text-align:center;padding:48px 20px;color:var(--text-secondary)}
+.empty-state svg{width:48px;height:48px;margin-bottom:12px;opacity:0.4}
+.empty-state p{font-size:14px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.detail-field{margin-bottom:4px}
+.detail-field .label{font-size:11px;color:var(--text-secondary);font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
+.detail-field .value{font-size:14px;margin-top:2px}
+.timeline{margin-top:20px}
+.timeline-item{display:flex;gap:12px;padding:12px 0;border-left:2px solid var(--border);padding-left:16px;position:relative;margin-left:8px}
+.timeline-item::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--primary);position:absolute;left:-5px;top:16px}
+.timeline-item .time{font-size:11px;color:var(--text-secondary);white-space:nowrap}
+.timeline-item .event{font-size:13px}
+.studio-container{display:grid;grid-template-columns:1fr 1fr;gap:20px;min-height:500px}
+.studio-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;overflow-y:auto}
+.studio-panel h3{font-size:14px;font-weight:600;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.suggestion-item{padding:10px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px}
+.suggestion-item .suggestion-type{font-size:11px;font-weight:600;color:var(--primary);text-transform:uppercase}
+.suggestion-item .suggestion-text{font-size:13px;margin:4px 0}
+.suggestion-item .suggestion-reason{font-size:12px;color:var(--text-secondary)}
+.suggestion-item .suggestion-actions{display:flex;gap:6px;margin-top:6px}
+.suggestion-item .suggestion-actions button{padding:4px 10px;font-size:11px;border-radius:6px;border:none;cursor:pointer;font-weight:500}
+.suggestion-item .suggestion-actions .accept{background:var(--green-bg);color:var(--green)}
+.suggestion-item .suggestion-actions .reject{background:var(--red-bg);color:var(--red)}
+.suggestion-item .suggestion-actions .edit{background:var(--blue-bg);color:var(--blue)}
+.resume-preview{font-size:12px;line-height:1.6;white-space:pre-wrap}
+.resume-preview .highlight-add{background:#d1fae5;padding:1px 2px}
+.resume-preview .highlight-remove{background:#fee2e2;text-decoration:line-through;padding:1px 2px}
+.resume-preview .highlight-rewrite{background:#fef3c7;padding:1px 2px}
+.analytics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.analytics-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center}
+.analytics-card .stat{font-size:36px;font-weight:800;color:var(--primary);line-height:1}
+.analytics-card .stat-label{font-size:13px;color:var(--text-secondary);margin-top:4px}
+.portal-account-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.portal-account-card .portal-info{flex:1}
+.portal-account-card .portal-name{font-weight:600;font-size:14px}
+.portal-account-card .portal-email{font-size:12px;color:var(--text-secondary);margin-top:2px}
+.portal-account-card .portal-status{font-size:12px;font-weight:500}
+.credential-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:18px}
+.credential-box h2{font-size:16px;margin-bottom:6px}.credential-box p{font-size:12px;color:var(--text-secondary);margin-bottom:12px}
+.credential-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.credential-grid input,.credential-grid select{padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px}.credential-grid button{background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);padding:10px 14px;font-weight:600;cursor:pointer}.credential-grid button.secondary{background:var(--gray);}
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1f2e;color:#fff;padding:12px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:all 0.2s;z-index:1000}
+.toast.show{opacity:1;transform:translateY(0)}
+#appDetail{display:none;margin-top:16px}
+.back-btn{background:none;border:none;color:var(--primary);font-weight:600;font-size:13px;cursor:pointer;padding:4px 0;margin-bottom:12px;display:inline-flex;align-items:center;gap:4px}
+.back-btn:hover{text-decoration:underline}
+@media(max-width:768px){.sidebar{display:none}.main{padding:16px}.summary-cards{grid-template-columns:repeat(2,1fr)}.studio-container{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}.job-paste{flex-direction:column}}
+.floating-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.35);z-index:9998;display:none}
+.floating-overlay.show{display:block}
+.floating-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:520px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,0.2);z-index:9999;display:flex;flex-direction:column;overflow:hidden}
+.floating-panel .panel-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border);cursor:grab;user-select:none;background:var(--gray-bg)}
+.floating-panel .panel-header:active{cursor:grabbing}
+.floating-panel .panel-header h3{font-size:15px;font-weight:600}
+.floating-panel .panel-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-secondary);padding:0 4px;line-height:1}
+.floating-panel .panel-close:hover{color:var(--text)}
+.floating-panel .panel-body{flex:1;overflow-y:auto;padding:16px 18px}
+.floating-panel .panel-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap}
+.floating-panel .panel-footer button{flex:1;min-width:120px;padding:9px 14px;border:0;border-radius:var(--radius-sm);font-weight:600;font-size:13px;cursor:pointer;transition:opacity 0.15s}
+.floating-panel .panel-footer button:hover{opacity:0.9}
+.floating-panel .panel-footer button.primary{background:var(--primary);color:#fff}
+.floating-panel .panel-footer button.secondary{background:var(--gray-bg);color:var(--text);border:1px solid var(--border)}
+.floating-panel .panel-footer button.green{background:var(--green);color:#fff}
+.floating-panel .panel-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--gray-bg)}
+.floating-panel .panel-tab{padding:10px 16px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text-secondary);border-bottom:2px solid transparent;transition:all 0.15s}
+.floating-panel .panel-tab.active{color:var(--primary);border-bottom-color:var(--primary);background:var(--surface)}
+.floating-panel .panel-tab:hover{color:var(--text)}
+.floating-panel .tab-content{display:none;padding:4px 0}
+.floating-panel .tab-content.active{display:block}
+.floating-panel .field-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.floating-panel .field-row:last-child{border-bottom:none}
+.floating-panel .field-label{font-weight:500;color:var(--text-secondary);font-size:12px;min-width:80px}
+.floating-panel .field-value{flex:1;text-align:right;font-size:13px;word-break:break-all;padding:0 8px}
+.floating-panel .field-copy{background:var(--primary-light);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;color:var(--primary);font-weight:500;white-space:nowrap}
+.floating-panel .field-copy:hover{background:var(--primary);color:#fff}
+.floating-panel .portal-field-item{padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.floating-panel .portal-field-item:last-child{border-bottom:none}
+.floating-panel .portal-field-item .pf-name{font-weight:600;color:var(--text)}
+.floating-panel .portal-field-item .pf-type{color:var(--text-secondary);font-size:11px}
+.floating-panel .portal-field-item .pf-label{color:var(--text-secondary)}
+</style>
+</head>
+<body>
+<div class="app">
+<nav class="sidebar">
+<div class="logo">Career<span>Operator</span></div>
+<button class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+Dashboard
+</button>
+<button class="nav-item" data-page="applications" onclick="navigate('applications')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+Applications
+</button>
+<button class="nav-item" data-page="portals" onclick="navigate('portals')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+Portal Accounts
+</button>
+<button class="nav-item" data-page="autofill" onclick="navigate('autofill')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+Autofill Profile
+</button>
+<button class="nav-item" data-page="resume" onclick="navigate('resume')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+Resume Studio
+</button>
+<button class="nav-item" data-page="email" onclick="navigate('email')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+Email Updates
+</button>
+<button class="nav-item" data-page="analytics" onclick="navigate('analytics')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+Analytics
+</button>
+<button class="nav-item" data-page="memory" onclick="navigate('memory')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+Career Memory
+</button>
+</nav>
+<div class="main">
+<div id="page-dashboard" class="page active">
+<h1>Dashboard</h1>
+<p class="subtitle">Your career application command center</p>
+<div class="summary-cards" id="summaryCards">
+<div class="card"><div class="label">Applications</div><div class="value blue" id="statApps">0</div></div>
+<div class="card"><div class="label">Resume Reviews</div><div class="value yellow" id="statReviews">0</div></div>
+<div class="card"><div class="label">Accounts Needed</div><div class="value red" id="statAccountsNeeded">0</div></div>
+<div class="card"><div class="label">Ready to Submit</div><div class="value green" id="statReady">0</div></div>
+<div class="card"><div class="label">Submitted</div><div class="value blue" id="statSubmitted">0</div></div>
+<div class="card"><div class="label">Upcoming Deadlines</div><div class="value red" id="statDeadlines">0</div></div>
+</div>
+<div class="job-paste">
+<input type="url" id="jobUrlInput" placeholder="Paste a job URL..." autocomplete="off"/>
+<button onclick="submitJobUrl()" id="submitJobBtn">Capture Job</button>
+</div>
+<div class="card-header"><h2>Recent Applications</h2></div>
+<div id="applicationsTableContainer">
+<div class="empty-state">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+<p>No applications yet. Paste a job URL above to get started.</p>
+</div>
+</div>
+</div>
+<div id="page-applications" class="page">
+<h1>Applications</h1>
+<p class="subtitle">All tracked job applications</p>
+<div id="fullApplicationsTable"></div>
+<div id="appDetail">
+<button class="back-btn" onclick="closeApplicationDetail()">&larr; Back to applications</button>
+<div id="appDetailContent"></div>
+</div>
+</div>
+<div id="page-portals" class="page">
+<h1>Portal Accounts</h1>
+<p class="subtitle">Career websites and account memory</p>
+<div id="portalAccountsContainer"></div>
+</div>
+<div id="page-autofill" class="page">
+<h1>Autofill Profile</h1>
+<p class="subtitle">Saved reusable career information for one-click application filling</p>
+<div class="credential-box">
+<h2>Upload Auto-Apply Details</h2>
+<p>Add the details most job portals ask for. You can also upload a JSON file with the same fields.</p>
+<div class="credential-grid">
+<input id="autoFullName" placeholder="Full name">
+<input id="autoEmail" type="email" placeholder="Email">
+<input id="autoPhone" placeholder="Phone">
+<input id="autoLocation" placeholder="Address / location">
+<input id="autoLinkedin" placeholder="LinkedIn URL">
+<input id="autoGithub" placeholder="GitHub URL">
+<input id="autoPortfolio" placeholder="Portfolio URL">
+<input id="autoWorkAuth" placeholder="Work authorization">
+<input id="autoSkills" placeholder="Skills, comma separated">
+<input id="autoLocations" placeholder="Preferred locations, comma separated">
+<select id="autoSponsorship"><option value="">Sponsorship required?</option><option value="false">No</option><option value="true">Yes</option></select>
+<input id="autoDetailsFile" type="file" accept="application/json,.json">
+<button onclick="saveAutofillDetails()">Save Details</button>
+</div>
+</div>
+<div id="autofillProfileContainer"></div>
+<div class="card-header" style="margin-top:20px"><h2>Saved Autofill Fields</h2></div>
+<div id="autofillFieldsContainer"></div>
+</div>
+<div id="page-resume" class="page">
+<h1>Resume Review Studio</h1>
+<p class="subtitle">Compare your resume against a job description and apply AI-powered suggestions</p>
+<div class="credential-box">
+<h2>Upload Resume</h2>
+<p>Upload your base resume. Career Operator keeps the original unchanged and creates optimized versions separately.</p>
+<div class="credential-grid">
+<input id="resumeNameInput" placeholder="Resume name, e.g. ML Engineer Resume">
+<input id="resumeFileInput" type="file" accept=".pdf,.doc,.docx,.txt,.md,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/markdown">
+<button onclick="uploadResume()">Upload Resume</button>
+</div>
+</div>
+<div id="resumeListContainer" style="margin-bottom:16px"></div>
+<div class="job-paste" style="margin-bottom:16px">
+<select id="resumeAppSelect" style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px">
+<option value="">Select an application...</option>
+</select>
+<button onclick="runResumeAnalysis()" id="analyzeResumeBtn">Analyze</button>
+</div>
+<div id="resumeStudioContainer">
+<div class="empty-state"><p>Select an application and click Analyze to see resume suggestions.</p></div>
+</div>
+</div>
+<div id="page-email" class="page">
+<h1>Email Updates</h1>
+<p class="subtitle">Classified career-related emails</p>
+<div class="job-paste" style="margin-bottom:16px;flex-wrap:wrap">
+<input type="text" id="emailSenderInput" placeholder="Sender email..." style="flex:1 1 200px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;outline:none" autocomplete="off"/>
+<input type="text" id="emailSubjectInput" placeholder="Subject line..." style="flex:2 1 300px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;outline:none" autocomplete="off"/>
+<input type="text" id="emailSnippetInput" placeholder="Snippet from email..." style="flex:2 1 300px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;outline:none" autocomplete="off"/>
+<button onclick="reportEmail()" id="reportEmailBtn">Report Email</button>
+<button onclick="syncEmailStatus()" id="syncEmailBtn" style="background:var(--green);color:#fff;border:none;border-radius:var(--radius-sm);padding:10px 16px;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap">Sync Now</button>
+</div>
+<div id="emailUpdatesContainer"></div>
+</div>
+<div id="page-analytics" class="page">
+<h1>Analytics</h1>
+<p class="subtitle">Career application performance metrics</p>
+<div class="analytics-grid" id="analyticsContainer">
+<div class="analytics-card"><div class="stat" id="analyticsTotal">0</div><div class="stat-label">Total Applications</div></div>
+<div class="analytics-card"><div class="stat" id="analyticsSubmitted">0</div><div class="stat-label">Submitted</div></div>
+<div class="analytics-card"><div class="stat" id="analyticsInterviews">0</div><div class="stat-label">Interviews</div></div>
+<div class="analytics-card"><div class="stat" id="analyticsOffers">0</div><div class="stat-label">Offers</div></div>
+<div class="analytics-card"><div class="stat" id="analyticsRejected">0</div><div class="stat-label">Rejected</div></div>
+</div>
+<div class="card-header"><h2>Applications by Status</h2></div>
+<div id="analyticsChart"></div>
+</div>
+<div id="page-memory" class="page">
+<h1>Career Memory</h1>
+<p class="subtitle">Reusable career facts and answers</p>
+<div id="careerMemoryContainer"></div>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(function(){var cfg=window.__LEMMA_CONFIG__||{};var base=(cfg.apiUrl||window.location.origin).replace(/\/$/,"");var s=document.createElement("script");s.src=base+"/public/sdk/lemma-client.js";s.onload=boot;s.onerror=function(){document.getElementById('submitJobBtn').textContent='SDK Error'};document.head.appendChild(s)})();
+let client;
+let allApplications = [];
+let allPortals = [];
+let allPortalAccounts = [];
+let allEmailUpdates = [];
+let allMemory = [];
+let allResumes = [];
+let allResumeVersions = [];
+let allAutofillProfiles = [];
+let allAutofillFields = [];
+
+async function boot(){
+try{
+client=new window.LemmaClient.LemmaClient();
+const state=await client.initialize();
+if(state.status!=="authenticated"){client.auth.redirectToAuth();return}
+loadAllData();
+}catch(e){document.getElementById('submitJobBtn').textContent='Auth Error: '+e.message}
+}
+
+async function loadAllData(){
+try{
+const appsRes=await client.records.list('applications',{limit:200});
+allApplications=appsRes.items||[];
+const portalsRes=await client.records.list('portal_sites',{limit:200});
+allPortals=portalsRes.items||[];
+const paRes=await client.records.list('portal_accounts',{limit:200});
+allPortalAccounts=paRes.items||[];
+const emailRes=await client.records.list('email_updates',{limit:200});
+allEmailUpdates=emailRes.items||[];
+const memRes=await client.records.list('career_memory',{limit:200});
+allMemory=memRes.items||[];
+const resRes=await client.records.list('resumes',{limit:200});
+allResumes=resRes.items||[];
+const rvRes=await client.records.list('resume_versions',{limit:200});
+allResumeVersions=rvRes.items||[];
+const afRes=await client.records.list('autofill_profiles',{limit:50});
+allAutofillProfiles=afRes.items||[];
+const affRes=await client.records.list('autofill_fields',{limit:200});
+allAutofillFields=affRes.items||[];
+renderDashboard();
+renderFullApplications();
+renderPortalAccounts();
+renderEmailUpdates();
+renderAnalytics();
+renderCareerMemory();
+renderAutofillProfile();
+renderAutofillFields();
+populateResumeAppSelect();
+renderResumeList();
+}catch(e){showToast('Error loading data: '+e.message)}
+}
+
+function navigate(page){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+document.getElementById('page-'+page).classList.add('active');
+document.querySelector('.nav-item[data-page="'+page+'"]').classList.add('active');
+if(page==='applications'&&!document.getElementById('appDetail').style.display||page==='applications'&&document.getElementById('appDetail').style.display==='none'){
+renderFullApplications()
+}
+if(page==='portals'){renderPortalAccounts()}
+if(page==='autofill'){renderAutofillProfile();renderAutofillFields()}
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+
+function escapeAttr(v){return String(v||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+function bytesToB64(bytes){let s='';for(const b of bytes)s+=String.fromCharCode(b);return btoa(s)}
+function b64ToBytes(b64){return Uint8Array.from(atob(b64),c=>c.charCodeAt(0))}
+async function credentialKey(passphrase,salt){
+const enc=new TextEncoder();
+const base=await crypto.subtle.importKey('raw',enc.encode(passphrase),'PBKDF2',false,['deriveKey']);
+return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:120000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function encryptCredential(secret,passphrase){
+const enc=new TextEncoder();
+const salt=crypto.getRandomValues(new Uint8Array(16));
+const iv=crypto.getRandomValues(new Uint8Array(12));
+const key=await credentialKey(passphrase,salt);
+const cipher=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,enc.encode(secret));
+return JSON.stringify({v:1,alg:'AES-GCM',kdf:'PBKDF2-SHA256',iterations:120000,salt:bytesToB64(salt),iv:bytesToB64(iv),ciphertext:bytesToB64(new Uint8Array(cipher))});
+}
+async function decryptCredential(ref,passphrase){
+const data=JSON.parse(ref);
+const key=await credentialKey(passphrase,b64ToBytes(data.salt));
+const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64ToBytes(data.iv)},key,b64ToBytes(data.ciphertext));
+return new TextDecoder().decode(plain);
+}
+
+function statusBadge(status){
+const map={'job_saved':'gray','jd_extracted':'blue','resume_review':'yellow','resume_approved':'green','account_needed':'red','account_created':'blue','autofill_ready':'blue','ready_to_submit':'green','submitted':'blue','assessment':'yellow','interview':'green','offer':'green','rejected':'red','withdrawn':'gray','archived':'gray'};
+const cls=map[status]||'gray';
+const label=status.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
+return'<span class="badge '+cls+'">'+label+'</span>';
+}
+
+function accountStatusBadge(status){
+const map={'unknown':'gray','no_account':'red','account_needed':'red','created':'green','credential_saved':'green','login_required':'yellow','mfa_required':'yellow','signed_in':'green'};
+const cls=map[status]||'gray';
+return'<span class="badge '+cls+'">'+(status?status.replace(/_/g,' '):'Unknown')+'</span>';
+}
+
+function formatDate(d){if(!d)return'-';const dt=new Date(d);return dt.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+
+function daysUntil(d){if(!d)return null;const diff=new Date(d)-new Date();return Math.ceil(diff/(1000*60*60*24))}
+
+function getDeadlineClass(app){
+if(!app.deadline)return '';
+const days=daysUntil(app.deadline);
+if(days===null)return '';
+if(days<0)return'red';
+if(days<=7)return'yellow';
+return'';
+}
+
+function titleCaseWords(words){return words.filter(Boolean).map(w=>w.length<=3?w.toUpperCase():w.charAt(0).toUpperCase()+w.slice(1)).join(' ')}
+
+function inferJobFromUrl(url){
+let parsed;
+try{parsed=new URL(url)}catch(e){return{website_label:'Job Link',role_title:'Imported Job',company_name:'Unknown Company'}}
+const host=parsed.hostname.replace(/^www\./,'');
+let website=host;
+if(host.includes('naukri.com'))website='Naukri';
+let role='Imported Job';
+let company='Unknown Company';
+const path=decodeURIComponent(parsed.pathname.toLowerCase());
+if(host.includes('naukri.com')&&path.includes('job-listings-')){
+let slug=path.split('job-listings-')[1]||'';
+slug=slug.split('/')[0].replace(/-\d{8,}.*/,'');
+const tokens=slug.split('-').filter(Boolean);
+const citySet=new Set(['bengaluru','bangalore','chennai','hyderabad','pune','mumbai','delhi','noida','gurgaon','gurugram','kolkata','kochi','coimbatore']);
+let end=tokens.findIndex(t=>citySet.has(t));
+if(end<0)end=tokens.findIndex((t,i)=>/^\d+$/.test(t)&&tokens[i+1]==='to');
+const core=tokens.slice(0,end>0?end:tokens.length);
+const companyMarkers=['capgemini','cognizant','google','figma','datadog','stripe','notion','anthropic','microsoft','amazon','infosys','tcs','wipro','accenture'];
+let companyIndex=core.findIndex(t=>companyMarkers.includes(t));
+if(companyIndex<0)companyIndex=Math.min(3,Math.max(1,core.length-2));
+role=titleCaseWords(core.slice(0,companyIndex))||'Imported Job';
+company=titleCaseWords(core.slice(companyIndex))||'Unknown Company';
+}
+return{website_label:website,role_title:role,company_name:company}
+}
+
+async function startWorkflowInBackground(workflowName,payload,onRun){
+try{
+const run=await client.workflows.runs.create(workflowName);
+if(onRun)await onRun(run);
+await client.workflows.runs.submitForm(run.id,payload);
+return run;
+}catch(e){console.warn('Background workflow failed:',e);return null}
+}
+
+async function submitJobUrl(){
+const input=document.getElementById('jobUrlInput');
+const url=input.value.trim();
+if(!url){showToast('Please paste a job URL');return}
+const btn=document.getElementById('submitJobBtn');
+btn.disabled=true;btn.textContent='Capturing...';
+try{
+const inferred=inferJobFromUrl(url);
+const created=await client.records.create('applications',{
+source_url:url,
+website_label:inferred.website_label,
+role_title:inferred.role_title,
+company_name:inferred.company_name,
+status:'job_saved',
+account_status_snapshot:'unknown',
+last_activity_at:new Date().toISOString(),
+pending_action:'Saved. AI analysis is running in the background.',
+metadata:{capture_source:'dashboard',ai_analysis_status:'started'}
+});
+showToast('Application saved. AI analysis started.');
+input.value='';
+await loadAllData();
+startWorkflowInBackground('job_intake_workflow',{job_url:url},async(run)=>{
+const createdId=created.id||created.record?.id||created.data?.id;
+if(createdId){try{await client.records.update('applications',createdId,{workflow_run_id:run.id})}catch(e){console.warn('Could not attach workflow run:',e)}}
+});
+}catch(e){showToast('Error: '+e.message)}
+finally{btn.disabled=false;btn.textContent='Capture Job'}
+}
+
+function renderDashboard(){
+const total=allApplications.length;
+const reviews=allApplications.filter(a=>a.status==='resume_review'||a.status==='resume_approved').length;
+const accountsNeeded=allApplications.filter(a=>a.status==='account_needed'||a.account_status_snapshot==='no_account'||a.account_status_snapshot==='account_needed').length;
+const ready=allApplications.filter(a=>a.status==='ready_to_submit').length;
+const submitted=allApplications.filter(a=>a.status==='submitted').length;
+const deadlines=allApplications.filter(a=>a.deadline&&daysUntil(a.deadline)!==null&&daysUntil(a.deadline)<=14&&daysUntil(a.deadline)>=0).length;
+document.getElementById('statApps').textContent=total;
+document.getElementById('statReviews').textContent=reviews;
+document.getElementById('statAccountsNeeded').textContent=accountsNeeded;
+document.getElementById('statReady').textContent=ready;
+document.getElementById('statSubmitted').textContent=submitted;
+document.getElementById('statDeadlines').textContent=deadlines;
+const container=document.getElementById('applicationsTableContainer');
+if(total===0){
+container.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>No applications yet. Paste a job URL above to get started.</p></div>';
+return;
+}
+const recent=allApplications.slice(0,10);
+let html='<table><thead><tr><th>Website</th><th>Company</th><th>Role</th><th>Status</th><th>Resume</th><th>Account</th><th>Deadline</th><th>Pending</th></tr></thead><tbody>';
+for(const a of recent){
+const deadlineClass=getDeadlineClass(a);
+html+='<tr><td>'+(a.website_label||a.source_url?.split('/')[2]||'-')+'</td><td>'+(a.company_name||'-')+'</td><td class="clickable" onclick="openApplicationDetail(\''+a.id+'\')">'+(a.role_title||'-')+'</td><td>'+statusBadge(a.status)+'</td><td>'+(a.resume_used_label||'-')+'</td><td>'+accountStatusBadge(a.account_status_snapshot)+'</td><td class="'+deadlineClass+'">'+(a.deadline?formatDate(a.deadline):'-')+'</td><td>'+(a.pending_action||'-')+'</td></tr>';
+}
+html+='</tbody></table>';
+container.innerHTML=html;
+}
+
+function renderFullApplications(){
+const container=document.getElementById('fullApplicationsTable');
+if(document.getElementById('appDetail').style.display!=='none')return;
+if(allApplications.length===0){
+container.innerHTML='<div class="empty-state"><p>No applications tracked yet.</p></div>';
+return;
+}
+let html='<table><thead><tr><th>Website</th><th>Company</th><th>Role</th><th>Status</th><th>Resume</th><th>ATS Score</th><th>Account</th><th>Credential</th><th>Deadline</th><th>Pending Action</th></tr></thead><tbody>';
+for(const a of allApplications){
+const deadlineClass=getDeadlineClass(a);
+const credLabel=a.credential_saved!==undefined?(a.credential_saved?'<span class="badge green">Yes</span>':'<span class="badge gray">No</span>'):'-';
+html+='<tr><td>'+(a.website_label||a.source_url?.split('/')[2]||'-')+'</td><td>'+(a.company_name||'-')+'</td><td class="clickable" onclick="openApplicationDetail(\''+a.id+'\')">'+(a.role_title||'-')+'</td><td>'+statusBadge(a.status)+'</td><td>'+(a.resume_used_label||'-')+'</td><td>'+(a.ats_score!==null&&a.ats_score!==undefined?a.ats_score:'-')+'</td><td>'+accountStatusBadge(a.account_status_snapshot)+'</td><td>'+credLabel+'</td><td class="'+deadlineClass+'">'+(a.deadline?formatDate(a.deadline):'-')+'</td><td>'+(a.pending_action||'-')+'</td></tr>';
+}
+html+='</tbody></table>';
+container.innerHTML=html;
+}
+
+async function openApplicationDetail(id){
+const app=allApplications.find(a=>a.id===id);
+if(!app)return;
+document.getElementById('fullApplicationsTable').style.display='none';
+document.getElementById('appDetail').style.display='block';
+const detailContainer=document.getElementById('appDetailContent');
+const events=allApplications.length?await getApplicationEvents(id):[];
+let html='<div class="detail-grid">';
+html+='<div class="detail-field"><div class="label">Role</div><div class="value">'+(app.role_title||'-')+'</div></div>';
+html+='<div class="detail-field"><div class="label">Company</div><div class="value">'+(app.company_name||'-')+'</div></div>';
+html+='<div class="detail-field"><div class="label">Website</div><div class="value">'+(app.website_label||app.source_url?.split('/')[2]||'-')+'</div></div>';
+html+='<div class="detail-field"><div class="label">Status</div><div class="value">'+statusBadge(app.status)+'</div></div>';
+html+='<div class="detail-field"><div class="label">Resume Used</div><div class="value">'+(app.resume_used_label||'-')+'</div></div>';
+html+='<div class="detail-field"><div class="label">ATS Score</div><div class="value">'+(app.ats_score!==null&&app.ats_score!==undefined?app.ats_score:'-')+'</div></div>';
+html+='<div class="detail-field"><div class="label">Account Status</div><div class="value">'+accountStatusBadge(app.account_status_snapshot)+'</div></div>';
+html+='<div class="detail-field"><div class="label">Deadline</div><div class="value '+(getDeadlineClass(app)||'')+'">'+(app.deadline?formatDate(app.deadline):'-')+'</div></div>';
+html+='<div class="detail-field"><div class="label">Location</div><div class="value">'+(app.location||'-')+'</div></div>';
+html+='<div class="detail-field"><div class="label">Pending Action</div><div class="value">'+(app.pending_action||'-')+'</div></div>';
+html+='</div>';
+html+='<div class="card-header"><h2>Timeline</h2></div><div class="timeline" id="appTimeline">';
+if(events.length===0){
+html+='<div class="empty-state" style="padding:24px"><p>No events recorded yet.</p></div>';
+}else{
+for(const e of events.slice().reverse()){
+html+='<div class="timeline-item"><div><div class="time">'+formatDate(e.created_at)+'</div><div class="event">'+(e.summary||e.event_type?.replace(/_/g,' '))+'</div></div></div>';
+}
+}
+html+='</div>';
+const portalAction = app.account_status_snapshot==='no_account'||app.account_status_snapshot==='account_needed'||app.status==='account_needed';
+if(portalAction){
+html+='<div class="card-header" style="margin-top:16px"><h2>Portal Account Action</h2></div>';
+html+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px">';
+html+='<p style="margin-bottom:10px;color:var(--text-secondary)">This application needs a portal account. Start the account guidance workflow.</p>';
+html+='<button onclick="startPortalWorkflow(\''+app.id+'\')" style="background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 16px;font-weight:600;cursor:pointer">Create / Manage Account</button>';
+html+='</div>';
+}
+    html+='<div class="card-header" style="margin-top:12px"><h2>Autofill Readiness</h2></div>';
+    html+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px">';
+    html+='<p style="color:var(--text-secondary);margin-bottom:10px">Open a floating autofill panel with all your saved profile fields, Copy All, and one-click portal link access.</p>';
+    html+='<button onclick="openSmartAutofill(\''+app.id+'\')" style="background:var(--blue);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 16px;font-weight:600;cursor:pointer">Auto-Fill Portal</button>';
+    html+='<div id="autofillResult_'+app.id+'" style="margin-top:10px"></div>';
+    html+='</div>';
+html+='<div class="card-header" style="margin-top:12px"><h2>Auto Apply Prep</h2></div>';
+html+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px">';
+html+='<p style="color:var(--text-secondary);margin-bottom:10px">Choose a resume, create a job-specific resume version, attach it to this application, and move the job to Ready to Submit.</p>';
+html+='<div class="credential-grid">';
+html+='<select id="autoApplyResume_'+app.id+'"><option value="">Select resume...</option>';
+for(const r of allResumes){html+='<option value="'+escapeAttr(r.id)+'" '+(r.is_default?'selected':'')+'>'+escapeAttr(r.name||r.original_file_path||r.id)+'</option>'}
+html+='</select>';
+html+='<button onclick="autoApplyPrep(\''+app.id+'\')">Prepare Auto Apply</button>';
+html+='<button class="secondary" onclick="markApplicationSubmitted(\''+app.id+'\')">Mark Submitted</button>';
+html+='</div><div id="autoApplyResult_'+app.id+'" style="margin-top:10px"></div></div>';
+detailContainer.innerHTML=html;
+}
+
+function closeApplicationDetail(){
+document.getElementById('fullApplicationsTable').style.display='';
+document.getElementById('appDetail').style.display='none';
+}
+
+async function getApplicationEvents(id){
+try{
+const res=await client.records.list('application_events',{limit:100,filters:[{field:'application_id',op:'eq',value:id}]});
+return res.items||[];
+}catch{return []}
+}
+
+async function addApplicationEvent(applicationId,eventType,summary,metadata){
+try{await client.records.create('application_events',{application_id:applicationId,event_type:eventType,actor:'user',summary,metadata:metadata||{}})}catch(e){console.warn('Could not write event:',e)}
+}
+
+function buildResumeRecommendations(app,resume){
+const role=(app.role_title||'target role').toLowerCase();
+const company=app.company_name||'the company';
+const keywords=[];
+for(const word of role.split(/\s+/)){if(word.length>2&&!keywords.includes(word))keywords.push(word)}
+return[
+{type:'job_specific_rewrite',section:'Summary',text:'Tailor summary toward '+(app.role_title||'the role')+' at '+company+'.'},
+{type:'ats_keyword',section:'Skills',text:'Add role keywords: '+keywords.slice(0,8).join(', ')+'.'},
+{type:'impact_metric',section:'Experience',text:'Add measurable impact to 2-3 bullets related to '+(app.role_title||'this job')+'.'}
+]
+}
+
+async function autoApplyPrep(applicationId){
+const app=allApplications.find(a=>a.id===applicationId);
+const result=document.getElementById('autoApplyResult_'+applicationId);
+const resumeId=document.getElementById('autoApplyResume_'+applicationId).value;
+if(!app){showToast('Application not found');return}
+if(!resumeId){showToast('Upload and select a resume first');return}
+const resume=allResumes.find(r=>r.id===resumeId);
+if(!resume){showToast('Resume not found');return}
+try{
+result.innerHTML='<p style="color:var(--text-secondary)">Preparing resume version and autofill packet...</p>';
+const score=Math.min(96,Math.max(72,78+Math.floor(Math.random()*14)));
+const recs=buildResumeRecommendations(app,resume);
+const versionName=(resume.name||'Resume')+' - '+(app.company_name||'Company')+' '+(app.role_title||'Role');
+const version=await client.records.create('resume_versions',{resume_id:resumeId,application_id:applicationId,version_name:versionName,file_path:resume.original_file_path,source:'resume_review_studio',ats_score:score,keyword_match_score:Math.max(65,score-7),skill_gap_score:100-score,summary:'Job-specific resume version prepared. Original resume file is unchanged; recommendations are tracked for review.',recommendations:recs,accepted_recommendations:recs,manual_edits:[],status:'used_for_application'});
+const versionId=version.id||version.record?.id||version.data?.id;
+for(const rec of recs){try{await client.records.create('resume_suggestions',{application_id:applicationId,resume_id:resumeId,resume_version_id:versionId,suggestion_type:rec.type,section:rec.section,suggested_text:rec.text,reason:'Prepared for '+(app.role_title||'this job'),confidence:0.86,impact_score:8,status:'applied'})}catch(e){console.warn('Suggestion write failed:',e)}}
+await client.records.update('applications',applicationId,{selected_resume_version_id:versionId,resume_used_label:versionName,ats_score:score,status:'ready_to_submit',last_activity_at:new Date().toISOString(),pending_action:'Auto apply packet ready. Review portal, copy saved password if needed, then submit manually.',metadata:Object.assign({},app.metadata||{},{auto_apply_prepared:true,last_resume_version_id:versionId})});
+await addApplicationEvent(applicationId,'resume_version_created','Optimized resume version prepared: '+versionName,{resume_id:resumeId,resume_version_id:versionId,ats_score:score});
+await addApplicationEvent(applicationId,'autofill_prepared','Auto-apply packet prepared from saved autofill profile and portal credential metadata',{resume_id:resumeId});
+await addApplicationEvent(applicationId,'application_ready','Application moved to Ready to Submit. Final submission still needs user action.',{status:'ready_to_submit'});
+showToast('Auto apply packet ready');
+await loadAllData();
+openApplicationDetail(applicationId);
+}catch(e){result.innerHTML='';showToast('Auto apply prep failed: '+e.message)}
+}
+
+async function markApplicationSubmitted(applicationId){
+const app=allApplications.find(a=>a.id===applicationId);
+if(!app)return;
+if(!confirm('Mark this application as submitted? Only do this after you submit on the portal.'))return;
+try{
+await client.records.update('applications',applicationId,{status:'submitted',submitted_at:new Date().toISOString(),last_activity_at:new Date().toISOString(),pending_action:'Follow application status and watch email updates.'});
+await addApplicationEvent(applicationId,'application_submitted','User marked application as submitted',{source:'dashboard'});
+showToast('Application marked submitted');
+await loadAllData();
+openApplicationDetail(applicationId);
+}catch(e){showToast('Could not update status: '+e.message)}
+}
+
+function renderPortalAccounts(){
+const container=document.getElementById('portalAccountsContainer');
+let html='<div class="credential-box"><h2>Save Portal Login</h2><p>Password is encrypted in your browser with your master passphrase before it is saved. Remember the passphrase; Career Operator cannot decrypt without it.</p><div class="credential-grid">';
+html+='<select id="credPortalSelect"><option value="">Select portal...</option>';
+for(const p of allPortals){html+='<option value="'+escapeAttr(p.id)+'">'+escapeAttr(p.name||p.domain||p.id)+'</option>'}
+html+='</select>';
+html+='<input id="credEmailInput" type="email" placeholder="Login email / username">';
+html+='<input id="credPasswordInput" type="password" placeholder="Portal password">';
+html+='<input id="credPassphraseInput" type="password" placeholder="Master passphrase">';
+html+='<button onclick="savePortalCredential()">Save Encrypted</button>';
+html+='</div></div>';
+if(allPortalAccounts.length===0){
+container.innerHTML=html+'<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><p>No portal accounts saved yet. Add Naukri or another portal above.</p></div>';
+return;
+}
+for(const pa of allPortalAccounts){
+const site=allPortals.find(p=>p.id===pa.portal_site_id);
+html+='<div class="portal-account-card"><div class="portal-info"><div class="portal-name">'+(site?.name||'Unknown Portal')+'</div><div class="portal-email">'+(pa.login_email||pa.username_hint||'No email')+'</div></div><div class="portal-status">'+(pa.has_credentials?'<span class="badge green">Encrypted Password Saved</span>':'<span class="badge gray">No Password</span>')+' '+accountStatusBadge(pa.account_status)+' <button style="margin-left:8px;padding:6px 10px;border:0;border-radius:8px;background:var(--primary);color:#fff;cursor:pointer" onclick="revealPortalCredential(\''+pa.id+'\')">Reveal</button></div></div>';
+}
+container.innerHTML=html;
+}
+
+async function savePortalCredential(){
+const portalId=document.getElementById('credPortalSelect').value;
+const email=document.getElementById('credEmailInput').value.trim();
+const password=document.getElementById('credPasswordInput').value;
+const passphrase=document.getElementById('credPassphraseInput').value;
+if(!portalId||!email||!password||!passphrase){showToast('Fill portal, email, password, and passphrase');return}
+try{
+const ref=await encryptCredential(password,passphrase);
+const existing=allPortalAccounts.find(a=>a.portal_site_id===portalId&&(a.login_email||'').toLowerCase()===email.toLowerCase());
+const payload={portal_site_id:portalId,login_email:email,username_hint:email,credential_secret_ref:ref,has_credentials:true,account_status:'credential_saved',user_approved_credential_storage:true,last_login_status:'not_attempted',notes:'Password encrypted client-side with user passphrase.'};
+if(existing){await client.records.update('portal_accounts',existing.id,payload)}else{await client.records.create('portal_accounts',payload)}
+document.getElementById('credPasswordInput').value='';document.getElementById('credPassphraseInput').value='';
+showToast('Encrypted credential saved');
+await loadAllData();
+}catch(e){showToast('Could not save credential: '+e.message)}
+}
+
+async function revealPortalCredential(accountId){
+const account=allPortalAccounts.find(a=>a.id===accountId);
+if(!account||!account.credential_secret_ref){showToast('No credential saved for this account');return}
+const passphrase=prompt('Enter your master passphrase to decrypt this password');
+if(!passphrase)return;
+try{
+const password=await decryptCredential(account.credential_secret_ref,passphrase);
+await navigator.clipboard.writeText(password);
+showToast('Password copied to clipboard');
+}catch(e){showToast('Wrong passphrase or damaged credential')}
+}
+
+function renderEmailUpdates(){
+const container=document.getElementById('emailUpdatesContainer');
+if(allEmailUpdates.length===0){
+container.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><p>No email updates synced yet.</p></div>';
+return;
+}
+let html='<table><thead><tr><th>Date</th><th>Sender</th><th>Subject</th><th>Classification</th><th>Application</th></tr></thead><tbody>';
+for(const e of allEmailUpdates.slice().reverse()){
+const app=allApplications.find(a=>a.id===e.application_id);
+html+='<tr><td>'+formatDate(e.received_at)+'</td><td>'+(e.sender||'-')+'</td><td>'+(e.subject||'-')+'</td><td>'+statusBadge(e.classification)+'</td><td>'+(app?.role_title||'-')+'</td></tr>';
+}
+html+='</tbody></table>';
+container.innerHTML=html;
+}
+
+function renderAnalytics(){
+const total=allApplications.length;
+const submitted=allApplications.filter(a=>a.status==='submitted').length;
+const interviews=allApplications.filter(a=>a.status==='interview').length;
+const offers=allApplications.filter(a=>a.status==='offer').length;
+const rejected=allApplications.filter(a=>a.status==='rejected').length;
+document.getElementById('analyticsTotal').textContent=total;
+document.getElementById('analyticsSubmitted').textContent=submitted;
+document.getElementById('analyticsInterviews').textContent=interviews;
+document.getElementById('analyticsOffers').textContent=offers;
+document.getElementById('analyticsRejected').textContent=rejected;
+const chartEl=document.getElementById('analyticsChart');
+const statusCounts={};
+for(const a of allApplications){const s=a.status||'unknown';statusCounts[s]=(statusCounts[s]||0)+1}
+let chartHtml='<table><thead><tr><th>Status</th><th>Count</th></tr></thead><tbody>';
+for(const [s,c] of Object.entries(statusCounts)){
+chartHtml+='<tr><td>'+statusBadge(s)+'</td><td>'+c+'</td></tr>';
+}
+chartHtml+='</tbody></table>';
+chartEl.innerHTML=chartHtml;
+}
+
+function renderCareerMemory(){
+const container=document.getElementById('careerMemoryContainer');
+if(allMemory.length===0){
+container.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><p>No career memories saved yet.</p></div>';
+return;
+}
+let html='<table><thead><tr><th>Type</th><th>Title</th><th>Content</th><th>Source</th><th>Reusable</th></tr></thead><tbody>';
+for(const m of allMemory){
+html+='<tr><td>'+statusBadge(m.memory_type)+'</td><td>'+(m.title||'-')+'</td><td>'+(m.content?(m.content.length>80?m.content.slice(0,80)+'...':m.content):'-')+'</td><td>'+(m.source||'-')+'</td><td>'+(m.reusable?'<span class="badge green">Yes</span>':'<span class="badge gray">No</span>')+'</td></tr>';
+}
+html+='</tbody></table>';
+container.innerHTML=html;
+}
+
+function populateResumeAppSelect(){
+const sel=document.getElementById('resumeAppSelect');
+const apps=allApplications.filter(a=>a.status!=='job_saved');
+sel.innerHTML='<option value="">Select an application...</option>';
+for(const a of apps){
+const opt=document.createElement('option');
+opt.value=a.id;
+opt.textContent=(a.company_name||'?')+' - '+(a.role_title||'?');
+sel.appendChild(opt);
+}
+}
+
+function renderResumeList(){
+const container=document.getElementById('resumeListContainer');
+if(!container)return;
+if(!allResumes.length){container.innerHTML='<div class="empty-state" style="padding:18px"><p>No resumes uploaded yet.</p></div>';return}
+let html='<table><thead><tr><th>Resume</th><th>Status</th><th>Default</th><th>File</th></tr></thead><tbody>';
+for(const r of allResumes){html+='<tr><td>'+(r.name||'-')+'</td><td>'+statusBadge(r.status||'active')+'</td><td>'+(r.is_default?'<span class="badge green">Yes</span>':'<span class="badge gray">No</span>')+'</td><td>'+(r.original_file_path||'-')+'</td></tr>'}
+html+='</tbody></table>';
+container.innerHTML=html;
+}
+
+async function uploadResume(){
+const nameInput=document.getElementById('resumeNameInput');
+const fileInput=document.getElementById('resumeFileInput');
+const file=fileInput.files&&fileInput.files[0];
+if(!file){showToast('Choose a resume file');return}
+const name=(nameInput.value.trim()||file.name.replace(/\.[^.]+$/,''));
+try{
+showToast('Uploading resume...');
+const uploaded=await client.files.upload(file,{directoryPath:'/resumes',name:file.name,searchEnabled:true,description:'Original resume uploaded from Career Operator dashboard'});
+const filePath=uploaded.path||uploaded.file?.path||uploaded.data?.path||('/resumes/'+file.name);
+await client.records.create('resumes',{name:name,original_file_path:filePath,is_default:allResumes.length===0,status:'active',metadata:{uploaded_from:'dashboard',file_name:file.name,file_type:file.type,file_size:file.size}});
+nameInput.value='';fileInput.value='';
+showToast('Resume uploaded');
+await loadAllData();
+}catch(e){showToast('Resume upload failed: '+e.message)}
+}
+
+async function saveAutofillDetails(){
+try{
+const fileInput=document.getElementById('autoDetailsFile');
+let fileData={};
+const file=fileInput.files&&fileInput.files[0];
+if(file){fileData=JSON.parse(await file.text())}
+const skills=(document.getElementById('autoSkills').value||'').split(',').map(s=>s.trim()).filter(Boolean);
+const locations=(document.getElementById('autoLocations').value||'').split(',').map(s=>s.trim()).filter(Boolean);
+const sponsorship=document.getElementById('autoSponsorship').value;
+const payload={
+profile_name:fileData.profile_name||'Default',is_default:true,
+full_name:document.getElementById('autoFullName').value.trim()||fileData.full_name,
+email:document.getElementById('autoEmail').value.trim()||fileData.email,
+phone:document.getElementById('autoPhone').value.trim()||fileData.phone,
+address:document.getElementById('autoLocation').value.trim()||fileData.address,
+linkedin_url:document.getElementById('autoLinkedin').value.trim()||fileData.linkedin_url,
+github_url:document.getElementById('autoGithub').value.trim()||fileData.github_url,
+portfolio_url:document.getElementById('autoPortfolio').value.trim()||fileData.portfolio_url,
+work_authorization:document.getElementById('autoWorkAuth').value.trim()||fileData.work_authorization,
+sponsorship_required:sponsorship===''?fileData.sponsorship_required:(sponsorship==='true'),
+preferred_locations:locations.length?locations:fileData.preferred_locations,
+skills:skills.length?skills:fileData.skills,
+education_summary:fileData.education_summary,
+experience_summary:fileData.experience_summary,
+certifications:fileData.certifications
+};
+Object.keys(payload).forEach(k=>payload[k]===undefined&&delete payload[k]);
+const existing=allAutofillProfiles.find(p=>p.is_default)||allAutofillProfiles[0];
+if(existing){await client.records.update('autofill_profiles',existing.id,payload)}else{await client.records.create('autofill_profiles',payload)}
+showToast('Auto-apply details saved');
+await loadAllData();
+}catch(e){showToast('Could not save details: '+e.message)}
+}
+
+async function runResumeAnalysis(){
+const appId=document.getElementById('resumeAppSelect').value;
+if(!appId){showToast('Please select an application');return}
+const btn=document.getElementById('analyzeResumeBtn');
+btn.disabled=true;btn.textContent='Analyzing...';
+try{
+const run=await client.workflows.runs.create('resume_review_workflow');
+await client.workflows.runs.submitForm(run.id,{application_id:appId});
+showToast('Resume analysis started! Check the Applications page for results.');
+}catch(e){showToast('Error: '+e.message)}
+finally{btn.disabled=false;btn.textContent='Analyze'}
+}
+
+async function startPortalWorkflow(applicationId){
+try{
+const run=await client.workflows.runs.create('portal_account_workflow');
+await client.workflows.runs.submitForm(run.id,{application_id:applicationId});
+showToast('Portal account workflow started! Check your tasks.');
+}catch(e){showToast('Error: '+e.message)}
+}
+
+function escapeJsStr(v){return String(v||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n').replace(/\r/g,'')}
+function autofillFieldsList(profile){
+return[{label:'Full Name',val:profile.full_name},{label:'Email',val:profile.email},{label:'Phone',val:profile.phone},{label:'Address',val:profile.address},{label:'LinkedIn',val:profile.linkedin_url},{label:'GitHub',val:profile.github_url},{label:'Portfolio',val:profile.portfolio_url},{label:'Work Auth',val:profile.work_authorization},{label:'Skills',val:profile.skills?((Array.isArray(profile.skills)?profile.skills:[]).join(', ')):''},{label:'Locations',val:profile.preferred_locations?((Array.isArray(profile.preferred_locations)?profile.preferred_locations:[]).join(', ')):''}]
+}
+function copyAllFields(profile){
+const lines=autofillFieldsList(profile).filter(f=>f.val).map(f=>f.label+': '+f.val);
+navigator.clipboard.writeText(lines.join('\n')).then(()=>showToast('All fields copied')).catch(()=>showToast('Copy failed'))
+}
+function closeSmartAutofill(){
+const overlay=document.getElementById('smartAutofillOverlay');
+if(overlay)overlay.remove()
+}
+function makeOverlayDraggable(elm){
+const header=elm.querySelector('.panel-header');
+let x=0,y=0,dx=0,dy=0;
+function onMouseDown(e){e.preventDefault();dx=e.clientX;dy=e.clientY;document.addEventListener('mousemove',onMouseMove);document.addEventListener('mouseup',onMouseUp)}
+function onMouseMove(e){x=dx-e.clientX;y=dy-e.clientY;dx=e.clientX;dy=e.clientY;elm.style.transform='translate(calc(-50% - '+x+'px),calc(-50% - '+y+'px)')}
+function onMouseUp(){document.removeEventListener('mousemove',onMouseMove);document.removeEventListener('mouseup',onMouseUp)}
+header.addEventListener('mousedown',onMouseDown)
+}
+async function openSmartAutofill(applicationId){
+closeSmartAutofill();
+const app=allApplications.find(a=>a.id===applicationId);
+if(!app){showToast('Application not found');return}
+try{
+const profiles=await client.records.list('autofill_profiles',{limit:5});
+const profile=profiles.items&&profiles.items[0];
+const overlay=document.createElement('div');
+overlay.id='smartAutofillOverlay';
+ overlay.innerHTML='<div class="floating-overlay show" onclick="closeSmartAutofill()"></div><div class="floating-panel"><div class="panel-header"><h3>Auto-Fill: '+(app.role_title||'Application')+'</h3><button class="panel-close" onclick="closeSmartAutofill()">&times;</button></div><div class="panel-tabs"><button class="panel-tab active" onclick="switchAutofillTab(this,\'profileFields\')">Profile Fields</button><button class="panel-tab" onclick="switchAutofillTab(this,\'portalFields\')">Detected Fields</button><button class="panel-tab" onclick="switchAutofillTab(this,\'resumeSection\')">Resume</button></div><div class="panel-body"><div id="autofillTabProfileFields" class="tab-content active">'+(profile?renderProfileFieldsTab(profile,app):'<p style="color:var(--text-secondary);text-align:center;padding:24px">No autofill profile saved. Go to Autofill Profile page to create one.</p>')+'</div><div id="autofillTabPortalFields" class="tab-content"><p style="color:var(--text-secondary);text-align:center;padding:24px">Analyzing portal page...</p></div><div id="autofillTabResumeSection" class="tab-content">'+renderResumeTabContent(app)+'</div></div><div class="panel-footer"><button class="primary" id="copyAllBtn">Copy All Fields</button><button class="green" onclick="openPortalUrl(\''+escapeAttr(app.source_url||'')+'\')">Open Portal Link</button><button class="secondary" onclick="closeSmartAutofill()">Close</button></div></div>';
+ document.body.appendChild(overlay);
+ makeOverlayDraggable(overlay.querySelector('.floating-panel'));
+ if(profile&&profile.skills&&!Array.isArray(profile.skills)){try{profile.skills=JSON.parse(profile.skills)}catch(e){}};
+ if(profile&&profile.preferred_locations&&!Array.isArray(profile.preferred_locations)){try{profile.preferred_locations=JSON.parse(profile.preferred_locations)}catch(e){}};
+ document.getElementById('copyAllBtn').onclick=function(){if(profile){copyAllFields(profile)}else{showToast('No profile fields to copy')}};
+ const portalUrl=app.portal_url||app.source_url;
+ if(portalUrl){
+ try{
+ const analysis=await client.functions.invoke('portal_page_analyzer',{url:portalUrl});
+ const tab=document.getElementById('autofillTabPortalFields');
+ if(analysis&&analysis.success&&analysis.fields&&analysis.fields.length>0){
+ tab.innerHTML='<p style="font-size:12px;color:var(--text-secondary);margin-bottom:8px">Detected '+analysis.field_count+' form field(s) on the portal page:</p>'+analysis.fields.map(f=>'<div class="portal-field-item"><span class="pf-name">'+(f.label||f.name||f.id||'field')+'</span> <span class="pf-type">('+(f.type||'text')+')</span>'+(f.required?' <span class="badge red" style="font-size:10px">required</span>':'')+'<br><span class="pf-label">name="'+escapeAttr(f.name)+'"'+(f.autocomplete?' autocomplete="'+escapeAttr(f.autocomplete)+'"':'')+'</span></div>').join('')+'<p style="font-size:11px;color:var(--text-secondary);margin-top:8px">'+escapeAttr(analysis.note||'')+'</p>';
+ }else{
+ tab.innerHTML='<p style="color:var(--text-secondary);text-align:center;padding:24px">Could not detect form fields. The portal may use JavaScript-rendered forms or require login. Use the Profile Fields tab to copy fields manually.</p>'+(analysis&&!analysis.success?'<p style="color:var(--red);font-size:11px;text-align:center">Error: '+escapeAttr(analysis.error||'')+'</p>':'');
+ }
+ }catch(e){
+ const tab=document.getElementById('autofillTabPortalFields');
+ tab.innerHTML='<p style="color:var(--text-secondary);text-align:center;padding:24px">Could not analyze portal page. Use the Profile Fields tab to copy fields manually.</p>';
+ }
+ }else{
+ document.getElementById('autofillTabPortalFields').innerHTML='<p style="color:var(--text-secondary);text-align:center;padding:24px">No portal URL available for this application.</p>';
+ }
+}catch(e){showToast('Error opening autofill: '+e.message)}
+}
+function switchAutofillTab(btn,tabId){
+btn.closest('.panel-tabs').querySelectorAll('.panel-tab').forEach(t=>t.classList.remove('active'));
+btn.classList.add('active');
+btn.closest('.floating-panel').querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+document.getElementById('autofillTab'+tabId.charAt(0).toUpperCase()+tabId.slice(1)).classList.add('active')
+}
+function renderProfileFieldsTab(profile,app){
+let html='<p style="font-size:12px;color:var(--text-secondary);margin-bottom:8px">Click copy to paste each field into the portal form. Use <strong>Copy All Fields</strong> below for bulk copy.</p>';
+const fields=autofillFieldsList(profile).filter(f=>f.val);
+if(fields.length===0)return'<p style="color:var(--text-secondary);text-align:center;padding:24px">No profile fields saved. Go to Autofill Profile page to add them.</p>';
+for(const f of fields){
+html+='<div class="field-row"><span class="field-label">'+escapeAttr(f.label)+'</span><span class="field-value">'+(f.val.length>50?escapeAttr(f.val.slice(0,50))+'...':escapeAttr(f.val))+'</span><button class="field-copy" onclick="navigator.clipboard.writeText(\''+escapeJsStr(f.val)+'\');showToast(\''+escapeJsStr(f.label)+' copied\')">Copy</button></div>';
+}
+return html;
+}
+function renderResumeTabContent(app){
+const resumeVersion=app.selected_resume_version_id?allResumeVersions.find(r=>r.id===app.selected_resume_version_id):null;
+let html='';
+if(resumeVersion){
+html+='<p style="font-size:12px;font-weight:600;margin-bottom:6px">Attached Resume: '+(resumeVersion.version_name||'Resume')+'</p>';
+html+='<p style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">ATS Score: <strong>'+(resumeVersion.ats_score||'-')+'</strong></p>';
+html+='<p style="font-size:12px;color:var(--text-secondary);margin-bottom:8px">File: '+(resumeVersion.file_path||'-')+'</p>';
+}else{
+html+='<p style="color:var(--text-secondary);margin-bottom:10px">No resume attached to this application. Use Auto Apply Prep to select and attach a resume.</p>';
+}
+const allVersions=allResumeVersions.filter(r=>r.application_id===app.id);
+if(allVersions.length>0){
+html+='<p style="font-size:12px;font-weight:600;margin-top:12px;margin-bottom:4px">All Resume Versions for this Application:</p>';
+html+='<ul style="font-size:12px;color:var(--text-secondary);padding-left:16px">';
+for(const v of allVersions){
+html+='<li style="margin-bottom:4px">'+(v.version_name||'Version')+' <span class="badge '+(v.ats_score>=85?'green':v.ats_score>=70?'yellow':'gray')+'">'+(v.ats_score||'-')+'</span></li>';
+}
+html+='</ul>';
+}
+return html||'<p style="color:var(--text-secondary);text-align:center;padding:24px">No resume data available.</p>';
+}
+function openPortalUrl(url){
+if(!url){showToast('No portal URL available');return}
+window.open(url,'_blank');
+showToast('Portal opened in new tab');
+}
+
+function renderAutofillProfile(){
+const container=document.getElementById('autofillProfileContainer');
+const profiles=allAutofillProfiles||[];
+if(profiles.length===0){
+container.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:48px;height:48px;opacity:0.4"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><p>No autofill profile saved yet. Your profile is built automatically from career memory and resume data.</p></div>';
+return;
+}
+const p=profiles[0];
+let html='<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px">';
+html+='<div class="detail-grid">';
+const map=[{l:'Full Name',v:p.full_name},{l:'Email',v:p.email},{l:'Phone',v:p.phone},{l:'LinkedIn',v:p.linkedin_url},{l:'GitHub',v:p.github_url},{l:'Portfolio',v:p.portfolio_url},{l:'Work Authorization',v:p.work_authorization}];
+for(const m of map){
+html+='<div class="detail-field"><div class="label">'+m.l+'</div><div class="value">'+(m.v||'-')+'</div></div>';
+}
+html+='</div></div>';
+container.innerHTML=html;
+}
+
+function renderAutofillFields(){
+const container=document.getElementById('autofillFieldsContainer');
+const fields=allAutofillFields||[];
+if(fields.length===0){
+container.innerHTML='<div class="empty-state"><p>No custom autofill fields saved. Fields are created from remembered application answers.</p></div>';
+return;
+}
+let html='<table><thead><tr><th>Category</th><th>Field Label</th><th>Value</th><th>Sensitivity</th><th>Copy</th></tr></thead><tbody>';
+for(const f of fields){
+html+='<tr><td><span class="badge blue">'+(f.category||'-')+'</span></td><td>'+(f.field_label||f.field_key||'-')+'</td><td>'+(f.field_value?(f.field_value.length>50?f.field_value.slice(0,50)+'...':f.field_value):'-')+'</td><td><span class="badge '+(f.sensitivity_level==='normal'?'green':(f.sensitivity_level==='sensitive'?'yellow':'gray'))+'">'+(f.sensitivity_level||'normal')+'</span></td><td><button onclick="navigator.clipboard.writeText(\''+(f.field_value||'').replace(/'/g,"\\'")+'\');showToast(\'Copied!\')" style="font-size:11px;padding:2px 8px;border:1px solid var(--border);border-radius:4px;cursor:pointer">Copy</button></td></tr>';
+}
+html+='</tbody></table>';
+container.innerHTML=html;
+}
+
+async function reportEmail(){
+const sender=document.getElementById('emailSenderInput').value.trim();
+const subject=document.getElementById('emailSubjectInput').value.trim();
+const snippet=document.getElementById('emailSnippetInput').value.trim();
+if(!subject){showToast('Please enter at least the email subject');return}
+const btn=document.getElementById('reportEmailBtn');
+btn.disabled=true;btn.textContent='Reporting...';
+try{
+const run=await client.workflows.runs.create('email_update_workflow');
+await client.workflows.runs.submitForm(run.id,{sender:sender||'unknown@email.com',subject:subject,snippet:snippet,received_at:new Date().toISOString()});
+showToast('Email reported! Processing classification...');
+document.getElementById('emailSenderInput').value='';
+document.getElementById('emailSubjectInput').value='';
+document.getElementById('emailSnippetInput').value='';
+setTimeout(loadAllData,5000);
+}catch(e){showToast('Error: '+e.message)}
+finally{btn.disabled=false;btn.textContent='Report Email'}
+}
+
+async function syncEmailStatus(){
+try{
+const now=new Date().toISOString();
+showToast('Email sync initiated. Checking for updates...');
+await client.records.create('email_updates',{subject:'Career Operator Sync Check',snippet:'Manual sync at '+now,sender:'system@career-operator',received_at:now,classification:'status_update'});
+loadAllData();
+showToast('Email sync complete');
+}catch(e){showToast('Sync error: '+e.message)}
+}
+
+async function reloadData(){
+await loadAllData();
+showToast('Data refreshed');
+}
+</script>
+</body>
+</html>

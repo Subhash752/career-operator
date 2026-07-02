@@ -1,0 +1,18 @@
+{
+  "name": "autofill_fields",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "profile_id", "type": "UUID", "foreign_key": { "references": "autofill_profiles.id" } },
+    { "name": "category", "type": "ENUM", "required": true, "options": ["personal", "education", "experience", "skill", "project", "certification", "eligibility", "compensation", "availability", "demographic_optional", "common_answer", "custom"] },
+    { "name": "field_label", "type": "TEXT", "required": true, "max_length": 300 },
+    { "name": "field_key", "type": "TEXT", "required": true, "max_length": 180 },
+    { "name": "field_value", "type": "TEXT", "max_length": 4000 },
+    { "name": "sensitivity_level", "type": "ENUM", "required": true, "default": "normal", "options": ["normal", "sensitive", "credential", "optional_demographic"] },
+    { "name": "requires_confirmation", "type": "BOOLEAN", "default": false },
+    { "name": "source", "type": "ENUM", "default": "user", "options": ["user", "resume", "email", "agent", "application", "import"] },
+    { "name": "last_used_at", "type": "DATETIME" },
+    { "name": "usage_count", "type": "INTEGER", "default": 0 }
+  ],
+  "config": {}
+}

@@ -1,0 +1,21 @@
+{
+  "name": "resume_versions",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "resume_id", "type": "UUID", "required": true, "foreign_key": { "references": "resumes.id" } },
+    { "name": "application_id", "type": "UUID", "foreign_key": { "references": "applications.id" } },
+    { "name": "version_name", "type": "TEXT", "required": true, "max_length": 240 },
+    { "name": "file_path", "type": "FILE_PATH", "required": true, "max_length": 700 },
+    { "name": "source", "type": "ENUM", "required": true, "default": "resume_review_studio", "options": ["uploaded", "resume_review_studio", "manual_edit", "import"] },
+    { "name": "ats_score", "type": "INTEGER" },
+    { "name": "keyword_match_score", "type": "INTEGER" },
+    { "name": "skill_gap_score", "type": "INTEGER" },
+    { "name": "summary", "type": "TEXT" },
+    { "name": "recommendations", "type": "JSON" },
+    { "name": "accepted_recommendations", "type": "JSON" },
+    { "name": "manual_edits", "type": "JSON" },
+    { "name": "status", "type": "ENUM", "required": true, "default": "draft", "options": ["draft", "pending_approval", "approved", "rejected", "used_for_application", "archived"] }
+  ],
+  "config": {}
+}

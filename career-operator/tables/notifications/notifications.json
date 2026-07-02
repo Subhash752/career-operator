@@ -1,0 +1,17 @@
+{
+  "name": "notifications",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "application_id", "type": "UUID", "foreign_key": { "references": "applications.id" } },
+    { "name": "type", "type": "ENUM", "required": true, "options": ["approval_required", "account_needed", "resume_review", "deadline", "email_update", "interview", "assessment", "credential_action", "system"] },
+    { "name": "title", "type": "TEXT", "required": true, "max_length": 240 },
+    { "name": "message", "type": "TEXT" },
+    { "name": "priority", "type": "ENUM", "required": true, "default": "normal", "options": ["low", "normal", "high", "urgent"] },
+    { "name": "status", "type": "ENUM", "required": true, "default": "unread", "options": ["unread", "read", "snoozed", "done", "dismissed"] },
+    { "name": "due_at", "type": "DATETIME" },
+    { "name": "action_url", "type": "TEXT", "max_length": 700 },
+    { "name": "metadata", "type": "JSON" }
+  ],
+  "config": {}
+}

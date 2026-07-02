@@ -1,0 +1,15 @@
+{
+  "name": "companies",
+  "primary_key_column": "id",
+  "enable_rls": false,
+  "columns": [
+    { "name": "name", "type": "TEXT", "required": true, "max_length": 240 },
+    { "name": "domain", "type": "TEXT", "max_length": 240 },
+    { "name": "website", "type": "TEXT", "max_length": 500 },
+    { "name": "career_page_url", "type": "TEXT", "max_length": 700 },
+    { "name": "industry", "type": "TEXT", "max_length": 160 },
+    { "name": "logo_url", "type": "TEXT", "max_length": 700 },
+    { "name": "metadata", "type": "JSON" }
+  ],
+  "config": {}
+}

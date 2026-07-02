@@ -1,0 +1,14 @@
+{
+  "name": "job-intelligence-agent",
+  "description": "Extracts job, company, ATS, and portal details from pasted job URLs and job descriptions.",
+  "instruction": { "$file": "instruction.md" },
+  "toolsets": ["POD", "WEB_SEARCH"],
+  "permissions": { "grants": [
+    { "resource_type": "datastore_table", "resource_name": "companies", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "portal_sites", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "job_descriptions", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "applications", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "application_events", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "folder", "resource_name": "/job_descriptions", "permission_ids": ["folder.read", "folder.write"] }
+  ] }
+}

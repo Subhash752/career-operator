@@ -1,0 +1,6 @@
+{
+  "name": "career-operator",
+  "display_name": "Career Operator",
+  "description": "Paste a job. Career Operator handles the rest: portal memory, account guidance, autofill, resume review, application tracking, and email sync.",
+  "version": "0.1.0"
+}

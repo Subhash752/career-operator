@@ -1,0 +1,13 @@
+{
+  "name": "application_events",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "application_id", "type": "UUID", "foreign_key": { "references": "applications.id" } },
+    { "name": "event_type", "type": "ENUM", "required": true, "options": ["job_url_submitted", "job_description_extracted", "portal_detected", "account_required", "account_created", "credential_saved", "credential_used", "autofill_prepared", "resume_analysis_completed", "resume_suggestion_accepted", "resume_version_created", "application_ready", "application_submitted", "email_update_received", "interview_detected", "status_changed", "user_note", "security_event"] },
+    { "name": "actor", "type": "ENUM", "required": true, "default": "system", "options": ["user", "system", "agent", "function", "email", "connector"] },
+    { "name": "summary", "type": "TEXT", "required": true, "max_length": 500 },
+    { "name": "metadata", "type": "JSON" }
+  ],
+  "config": {}
+}

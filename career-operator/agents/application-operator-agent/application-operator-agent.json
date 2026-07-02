@@ -1,0 +1,17 @@
+{
+  "name": "application-operator-agent",
+  "description": "Coordinates application readiness across portal account state, autofill, resume version, documents, and final confirmation.",
+  "instruction": { "$file": "instruction.md" },
+  "toolsets": ["POD", "USER_INTERACTION"],
+  "permissions": { "grants": [
+    { "resource_type": "datastore_table", "resource_name": "applications", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "portal_accounts", "permission_ids": ["datastore.table.read", "datastore.record.read"] },
+    { "resource_type": "datastore_table", "resource_name": "autofill_profiles", "permission_ids": ["datastore.table.read", "datastore.record.read"] },
+    { "resource_type": "datastore_table", "resource_name": "autofill_fields", "permission_ids": ["datastore.table.read", "datastore.record.read"] },
+    { "resource_type": "datastore_table", "resource_name": "resume_versions", "permission_ids": ["datastore.table.read", "datastore.record.read"] },
+    { "resource_type": "datastore_table", "resource_name": "notifications", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "application_events", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "folder", "resource_name": "/generated_resumes", "permission_ids": ["folder.read"] },
+    { "resource_type": "folder", "resource_name": "/documents", "permission_ids": ["folder.read"] }
+  ] }
+}

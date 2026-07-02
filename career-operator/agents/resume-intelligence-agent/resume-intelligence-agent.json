@@ -1,0 +1,18 @@
+{
+  "name": "resume-intelligence-agent",
+  "description": "Analyzes resumes against job descriptions and prepares editable suggestions for Resume Review Studio.",
+  "instruction": { "$file": "instruction.md" },
+  "toolsets": ["POD", "USER_INTERACTION"],
+  "permissions": { "grants": [
+    { "resource_type": "datastore_table", "resource_name": "resumes", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "resume_versions", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "resume_suggestions", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "resume_change_sets", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "job_descriptions", "permission_ids": ["datastore.table.read", "datastore.record.read"] },
+    { "resource_type": "datastore_table", "resource_name": "applications", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "datastore_table", "resource_name": "application_events", "permission_ids": ["datastore.table.read", "datastore.record.read", "datastore.record.write"] },
+    { "resource_type": "folder", "resource_name": "/resumes", "permission_ids": ["folder.read"] },
+    { "resource_type": "folder", "resource_name": "/generated_resumes", "permission_ids": ["folder.read", "folder.write"] },
+    { "resource_type": "folder", "resource_name": "/job_descriptions", "permission_ids": ["folder.read"] }
+  ] }
+}

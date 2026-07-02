@@ -1,0 +1,24 @@
+{
+  "name": "autofill_profiles",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "profile_name", "type": "TEXT", "required": true, "default": "Default", "max_length": 160 },
+    { "name": "is_default", "type": "BOOLEAN", "default": false },
+    { "name": "full_name", "type": "TEXT", "max_length": 200 },
+    { "name": "email", "type": "TEXT", "max_length": 320 },
+    { "name": "phone", "type": "TEXT", "max_length": 80 },
+    { "name": "address", "type": "TEXT", "max_length": 700 },
+    { "name": "linkedin_url", "type": "TEXT", "max_length": 500 },
+    { "name": "github_url", "type": "TEXT", "max_length": 500 },
+    { "name": "portfolio_url", "type": "TEXT", "max_length": 500 },
+    { "name": "work_authorization", "type": "TEXT", "max_length": 240 },
+    { "name": "sponsorship_required", "type": "BOOLEAN" },
+    { "name": "preferred_locations", "type": "JSON" },
+    { "name": "education_summary", "type": "JSON" },
+    { "name": "experience_summary", "type": "JSON" },
+    { "name": "skills", "type": "JSON" },
+    { "name": "certifications", "type": "JSON" }
+  ],
+  "config": {}
+}

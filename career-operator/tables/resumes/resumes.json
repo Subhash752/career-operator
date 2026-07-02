@@ -1,0 +1,17 @@
+{
+  "name": "resumes",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "name", "type": "TEXT", "required": true, "max_length": 240 },
+    { "name": "original_file_path", "type": "FILE_PATH", "required": true, "max_length": 700 },
+    { "name": "parsed_summary", "type": "TEXT" },
+    { "name": "base_skills", "type": "JSON" },
+    { "name": "base_experience", "type": "JSON" },
+    { "name": "base_projects", "type": "JSON" },
+    { "name": "is_default", "type": "BOOLEAN", "default": false },
+    { "name": "status", "type": "ENUM", "required": true, "default": "active", "options": ["active", "archived", "deleted"] },
+    { "name": "metadata", "type": "JSON" }
+  ],
+  "config": {}
+}

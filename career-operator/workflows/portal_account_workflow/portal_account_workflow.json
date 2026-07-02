@@ -1,0 +1,80 @@
+{
+  "name": "portal_account_workflow",
+  "description": "Guides account creation/login preparation and gates credential storage behind explicit approval.",
+  "start": { "type": "MANUAL" },
+  "nodes": [
+    {
+      "id": "portal_request",
+      "type": "FORM",
+      "label": "Portal account request",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "application_id": { "type": "string", "title": "Application ID" },
+            "portal_site_id": { "type": "string", "title": "Portal site ID" },
+            "company_id": { "type": "string", "title": "Company ID" },
+            "login_email": { "type": "string", "title": "Login email" },
+            "needs_account_creation": { "type": "boolean", "title": "Needs account creation" }
+          },
+          "required": ["application_id", "portal_site_id"]
+        }
+      }
+    },
+    {
+      "id": "prepare_portal_action",
+      "type": "AGENT",
+      "label": "Prepare portal action",
+      "config": {
+        "agent_name": "portal-operator-agent",
+        "input_mapping": {
+          "application_id": { "type": "expression", "value": "portal_request.application_id" },
+          "portal_site_id": { "type": "expression", "value": "portal_request.portal_site_id" },
+          "company_id": { "type": "expression", "value": "portal_request.company_id", "optional": true },
+          "login_email": { "type": "expression", "value": "portal_request.login_email", "optional": true },
+          "needs_account_creation": { "type": "expression", "value": "portal_request.needs_account_creation", "optional": true }
+        }
+      }
+    },
+    {
+      "id": "credential_approval",
+      "type": "FORM",
+      "label": "Approve credential handling",
+      "config": {
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "account_created": { "type": "boolean", "title": "Account was created or confirmed" },
+            "approve_credential_storage": { "type": "boolean", "title": "Approve saving credential reference" },
+            "credential_secret_ref": { "type": "string", "title": "Credential secret reference", "description": "Reference only. Never paste a raw password here." },
+            "notes": { "type": "string", "title": "Notes" }
+          },
+          "required": ["account_created", "approve_credential_storage"]
+        }
+      }
+    },
+    {
+      "id": "record_portal_result",
+      "type": "AGENT",
+      "label": "Record portal result",
+      "config": {
+        "agent_name": "portal-operator-agent",
+        "input_mapping": {
+          "application_id": { "type": "expression", "value": "portal_request.application_id" },
+          "portal_site_id": { "type": "expression", "value": "portal_request.portal_site_id" },
+          "account_created": { "type": "expression", "value": "credential_approval.account_created" },
+          "approve_credential_storage": { "type": "expression", "value": "credential_approval.approve_credential_storage" },
+          "credential_secret_ref": { "type": "expression", "value": "credential_approval.credential_secret_ref", "optional": true },
+          "notes": { "type": "expression", "value": "credential_approval.notes", "optional": true }
+        }
+      }
+    },
+    { "id": "end", "type": "END", "label": "Portal account step complete" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "portal_request", "target": "prepare_portal_action" },
+    { "id": "e2", "source": "prepare_portal_action", "target": "credential_approval" },
+    { "id": "e3", "source": "credential_approval", "target": "record_portal_result" },
+    { "id": "e4", "source": "record_portal_result", "target": "end" }
+  ]
+}

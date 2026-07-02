@@ -1,0 +1,21 @@
+{
+  "name": "portal_accounts",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "portal_site_id", "type": "UUID", "required": true, "foreign_key": { "references": "portal_sites.id" } },
+    { "name": "company_id", "type": "UUID", "foreign_key": { "references": "companies.id" } },
+    { "name": "login_email", "type": "TEXT", "max_length": 320 },
+    { "name": "username_hint", "type": "TEXT", "max_length": 240 },
+    { "name": "credential_secret_ref", "type": "TEXT", "max_length": 700 },
+    { "name": "has_credentials", "type": "BOOLEAN", "default": false },
+    { "name": "account_status", "type": "ENUM", "required": true, "default": "unknown", "options": ["unknown", "no_account", "account_needed", "creation_started", "created", "credential_saved", "login_required", "mfa_required", "signed_in", "blocked", "disabled"] },
+    { "name": "created_by_career_operator", "type": "BOOLEAN", "default": false },
+    { "name": "user_approved_credential_storage", "type": "BOOLEAN", "default": false },
+    { "name": "requires_mfa", "type": "BOOLEAN", "default": false },
+    { "name": "last_login_status", "type": "ENUM", "default": "unknown", "options": ["unknown", "success", "failed", "mfa_required", "manual_required", "not_attempted"] },
+    { "name": "last_used_at", "type": "DATETIME" },
+    { "name": "notes", "type": "TEXT", "max_length": 1200 }
+  ],
+  "config": {}
+}

@@ -1,0 +1,19 @@
+{
+  "name": "email_updates",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "application_id", "type": "UUID", "foreign_key": { "references": "applications.id" } },
+    { "name": "sender", "type": "TEXT", "max_length": 320 },
+    { "name": "subject", "type": "TEXT", "required": true, "max_length": 500 },
+    { "name": "snippet", "type": "TEXT" },
+    { "name": "received_at", "type": "DATETIME", "required": true },
+    { "name": "classification", "type": "ENUM", "required": true, "default": "unknown", "options": ["unknown", "verification", "recruiter_reply", "assessment", "interview", "offer", "rejection", "deadline", "status_update", "newsletter", "unrelated"] },
+    { "name": "confidence", "type": "FLOAT" },
+    { "name": "raw_email_ref", "type": "TEXT", "max_length": 700 },
+    { "name": "requires_action", "type": "BOOLEAN", "default": false },
+    { "name": "action_due_at", "type": "DATETIME" },
+    { "name": "metadata", "type": "JSON" }
+  ],
+  "config": {}
+}

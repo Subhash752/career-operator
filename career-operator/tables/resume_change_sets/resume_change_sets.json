@@ -1,0 +1,17 @@
+{
+  "name": "resume_change_sets",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "application_id", "type": "UUID", "required": true, "foreign_key": { "references": "applications.id" } },
+    { "name": "resume_id", "type": "UUID", "required": true, "foreign_key": { "references": "resumes.id" } },
+    { "name": "base_version_id", "type": "UUID", "foreign_key": { "references": "resume_versions.id" } },
+    { "name": "output_version_id", "type": "UUID", "foreign_key": { "references": "resume_versions.id" } },
+    { "name": "changes_json", "type": "JSON" },
+    { "name": "manual_edits_json", "type": "JSON" },
+    { "name": "ats_score_before", "type": "INTEGER" },
+    { "name": "ats_score_after", "type": "INTEGER" },
+    { "name": "status", "type": "ENUM", "required": true, "default": "draft", "options": ["draft", "reviewing", "approved", "applied", "discarded"] }
+  ],
+  "config": {}
+}

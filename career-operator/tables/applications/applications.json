@@ -1,0 +1,28 @@
+{
+  "name": "applications",
+  "primary_key_column": "id",
+  "enable_rls": true,
+  "columns": [
+    { "name": "company_id", "type": "UUID", "foreign_key": { "references": "companies.id" } },
+    { "name": "portal_site_id", "type": "UUID", "foreign_key": { "references": "portal_sites.id" } },
+    { "name": "portal_account_id", "type": "UUID", "foreign_key": { "references": "portal_accounts.id" } },
+    { "name": "job_description_id", "type": "UUID", "foreign_key": { "references": "job_descriptions.id" } },
+    { "name": "selected_resume_version_id", "type": "UUID" },
+    { "name": "source_url", "type": "TEXT", "required": true, "max_length": 1000 },
+    { "name": "website_label", "type": "TEXT", "max_length": 240 },
+    { "name": "role_title", "type": "TEXT", "required": true, "max_length": 240 },
+    { "name": "company_name", "type": "TEXT", "max_length": 240 },
+    { "name": "location", "type": "TEXT", "max_length": 300 },
+    { "name": "status", "type": "ENUM", "required": true, "default": "job_saved", "options": ["job_saved", "jd_extracted", "resume_review", "resume_approved", "account_needed", "account_created", "autofill_ready", "ready_to_submit", "submitted", "assessment", "interview", "offer", "rejected", "withdrawn", "archived"] },
+    { "name": "account_status_snapshot", "type": "ENUM", "default": "unknown", "options": ["unknown", "no_account", "account_needed", "created", "credential_saved", "login_required", "mfa_required", "signed_in"] },
+    { "name": "resume_used_label", "type": "TEXT", "max_length": 240 },
+    { "name": "ats_score", "type": "INTEGER" },
+    { "name": "deadline", "type": "DATE" },
+    { "name": "submitted_at", "type": "DATETIME" },
+    { "name": "last_activity_at", "type": "DATETIME" },
+    { "name": "pending_action", "type": "TEXT", "max_length": 300 },
+    { "name": "workflow_run_id", "type": "TEXT", "max_length": 120 },
+    { "name": "metadata", "type": "JSON" }
+  ],
+  "config": {}
+}
